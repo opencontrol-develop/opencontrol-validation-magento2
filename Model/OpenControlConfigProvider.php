@@ -57,4 +57,14 @@ class OpenControlConfigProvider implements ConfigProviderInterface
     public function getValue($value){
         return $this->scopeConfig->getValue(self::CONFIGURATION_PATH.$value);
     }
+
+    public function isMethodIncludedInConfiguration($method) {
+        $paymentMethods = explode(',', $this->getValue('payment_methods'));
+        $this->logger->debug('#paymentMethodUser', ['method'=>$method]);
+        if (!in_array($method, $paymentMethods)) {
+            $this->logger->debug('MethodNotIncludedInConfiguration');
+            return false;
+        }
+        return true;
+    }
 }

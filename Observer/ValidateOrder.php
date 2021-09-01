@@ -45,13 +45,18 @@ class ValidateOrder implements ObserverInterface
 
     public function execute(Observer $observer) {
         $isActiveOpenControl = $this->openControlConfig->getValue('active');
-        if(!$isActiveOpenControl){
+        if (!$isActiveOpenControl) {
             return;
         }
 
         /** @var \Magento\Quote\Model\Quote  */
         $quote = $this->checkoutSession->getQuote();
-
+        
+        $method = $quote->getPayment()->getMethod();
+        if (!$this->openControlConfig->isMethodIncludedInConfiguration($method)) {
+            return;
+        }
+        
         $event = $observer->getEvent();
 
         $order = $event->getData('order');
@@ -59,15 +64,14 @@ class ValidateOrder implements ObserverInterface
             $order = $event->getData('orders')[0];
         }
         $payment = $order->getPayment();
-
         $orderExists = $this->orderService->existOrderWithQuoteId($quote->getId());
-        
+
         $ccNumber = $payment->getData('cc_number');
-        if(!$ccNumber){
-            if($orderExists) {
-                $this->orderService->copyCommentsHistory($orderExists, $order);
-                $orderExists->delete();
-            }
+        $ccMonth = $payment->getCcExpMonth();
+
+        //Offline methods or existing card credit
+        if($ccNumber == null || $ccMonth == null) {
+            $payment->setCcLast4(null);
             $this->logger->debug('#NoCard');
             return $order;
         }
@@ -83,11 +87,11 @@ class ValidateOrder implements ObserverInterface
         $body = $response->body;
         
         if ($response->httpCode === self::HTTP_OK && !in_array($body['response'], SELF::OK_REPONSES)) {
-            if(!$orderExists){
+            if (!$orderExists) {
                 $order->setStatus(OpenControlStatus::DENIED); 
                 $this->orderService->createCommentHistoryOpenControlDenied($order, $body['data']['matched_rules']);
                 $order->save();
-            }else{
+            } else {
                 $this->orderService->createCommentHistoryOpenControlDenied($orderExists, $body['data']['matched_rules']);
                 $orderExists->save();
             }
@@ -95,13 +99,8 @@ class ValidateOrder implements ObserverInterface
         }
 
         //Order valid
-        if($orderExists){
-            if ($response->httpCode === self::HTTP_OK && in_array($body['response'], SELF::OK_REPONSES)) {
-                $this->orderService->createCommentHistoryOpenControlApproved($order);
-            }
-            $this->orderService->copyCommentsHistory($orderExists, $order);
-            $orderExists->delete();
-            return $order;
+        if ($response->httpCode === self::HTTP_OK && in_array($body['response'], SELF::OK_REPONSES)) {
+            $this->orderService->createCommentHistoryOpenControlApproved($order);
         }
     }
 }

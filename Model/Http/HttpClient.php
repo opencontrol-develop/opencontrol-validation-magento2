@@ -21,7 +21,7 @@ class HttpClient
     }
     
     public function execute($url, $data, AuthDto $auth = null, $method = 'GET') {
-        $this->logger->debug('#HttpClient', ['url'=>$url, 'data'=>$data]);
+        //$this->logger->debug('#HttpClient', ['url'=>$url, 'data'=>$data]);
         $curl = curl_init();
 
         $headers = [

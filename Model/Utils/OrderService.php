@@ -6,13 +6,16 @@ class OrderService
 {
     protected $orderRepository;
     protected $searchCriteriaBuilder;
+    protected $sortOrder;
 
     public function __construct(
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
-        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder
+        \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
+        \Magento\Framework\Api\SortOrderBuilder $sortOrder
     ) {
         $this->orderRepository = $orderRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->sortOrder = $sortOrder;
     }
     
     
@@ -20,9 +23,10 @@ class OrderService
      * @return \Magento\Sales\Api\Data\OrderInterface|null 
      */
     public function existOrderWithQuoteId(int $id){
+        $sortOrder = $this->sortOrder->setField('created_at')->setDirection('ASC')->create();
         $this->searchCriteriaBuilder->addFilter('quote_id', $id);
         $orders = $this->orderRepository->getList(
-            $this->searchCriteriaBuilder->create()
+            $this->searchCriteriaBuilder->setSortOrders([$sortOrder])->create()
         )->getItems();
 
         if (count($orders) > 0) {

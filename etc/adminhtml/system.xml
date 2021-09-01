@@ -65,6 +65,11 @@
                         <field id="is_sandbox">0</field>
                     </depends>                       
                 </field>
+                <field id="payment_methods" translate="label" type="multiselect" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="0">
+					<label>Métodos de pago a analizar</label>
+					<source_model>Magento\Payment\Model\Config\Source\Allmethods</source_model>
+                    <validate>validate-select</validate>
+                </field>
             </group>
         </section>
     </system>
