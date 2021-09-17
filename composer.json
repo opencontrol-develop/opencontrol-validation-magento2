@@ -1,0 +1,19 @@
+{
+    "name": "opencontrol/magento2-integration",
+    "description": "Fraud risk analyzer integration for Magento 2",
+    "type": "magento2-module",    
+    "minimum-stability": "stable",    
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Openpay",
+            "homepage": "https://opencontrol.readme.io/docs",
+            "email": "soporte@openpay.mx"
+        },
+        {
+            "name": "Julio Vazquez",
+            "homepage": "https://opencontrol.readme.io/docs",
+            "email": "plugins@openpay.mx"
+        }
+    ]
+}
