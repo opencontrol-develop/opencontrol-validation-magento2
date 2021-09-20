@@ -87,12 +87,13 @@ class ValidateOrder implements ObserverInterface
         $body = $response->body;
         
         if ($response->httpCode === self::HTTP_OK && !in_array($body['response'], SELF::OK_REPONSES)) {
-            if (!$orderExists) {
+            $matchedName = (isset($response->body['data']['matched_rules'])) ? 'matched_rules' : 'matched_list'; 
+            if(!$orderExists){
                 $order->setStatus(OpenControlStatus::DENIED); 
-                $this->orderService->createCommentHistoryOpenControlDenied($order, $body['data']['matched_rules']);
+                $this->orderService->createCommentHistoryOpenControlDenied($order, $body['data'][$matchedName], $matchedName);
                 $order->save();
-            } else {
-                $this->orderService->createCommentHistoryOpenControlDenied($orderExists, $body['data']['matched_rules']);
+            }else{
+                $this->orderService->createCommentHistoryOpenControlDenied($orderExists, $body['data'][$matchedName], $matchedName);
                 $orderExists->save();
             }
             throw new LocalizedException(new Phrase(SELF::PAYMENT_ERROR));

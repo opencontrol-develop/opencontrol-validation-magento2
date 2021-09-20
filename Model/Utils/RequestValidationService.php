@@ -63,7 +63,7 @@ class RequestValidationService
         $request->customer->name = $order->getCustomerFirstname();
         $request->customer->last_name = $order->getCustomerLastname();
         $request->customer->phone = $order->getShippingAddress()->getTelephone();
-        $request->customer->emaill = $order->getCustomerEmail();
+        $request->customer->email = $order->getCustomerEmail();
     }
 
     private function setPaymentInformation($order, RequestValidation $request){

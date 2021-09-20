@@ -50,8 +50,13 @@ class OrderService
             ->setStatus(OpenControlStatus::APPROVED);
     }
 
-    public function createCommentHistoryOpenControlDenied($order, $reasons = null) {
+    public function createCommentHistoryOpenControlDenied($order, $reasons = null, $matchedName) {
         $reasonsMessage = '';
+        if ($matchedName === 'matched_list') {
+            $reasonsMessage = OpenControlStatus::MESSAGE_DENIED . ' (Rejected by '.$reasons['type'].' list)';
+            $order->addCommentToStatusHistory($reasonsMessage);
+            return;
+        }
         $numberReasons = count($reasons) - 1;
         $index = 0;
         foreach ($reasons as $reason) {

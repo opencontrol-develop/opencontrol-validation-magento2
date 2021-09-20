@@ -18,5 +18,5 @@ class Customer extends ModelObject
     public $name;
     public $last_name;
     public $phone;
-    public $emaill;
+    public $email;
 }
