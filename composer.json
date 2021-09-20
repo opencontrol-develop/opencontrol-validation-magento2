@@ -15,5 +15,10 @@
             "homepage": "https://opencontrol.readme.io/docs",
             "email": "plugins@openpay.mx"
         }
-    ]
+    ],
+    "extra": {
+        "map": [
+            ["*", "OpenControl/Integration"]
+        ]
+    }
 }
