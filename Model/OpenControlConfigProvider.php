@@ -17,6 +17,7 @@ class OpenControlConfigProvider implements ConfigProviderInterface
     protected $scopeConfig;
     protected $logger;
     protected $generator;
+    protected $enviroment;
 
     public function __construct(
         \OpenControl\Integration\Model\Request\DeviceSessionIdGenerator $generator,
@@ -28,13 +29,14 @@ class OpenControlConfigProvider implements ConfigProviderInterface
         $this->scopeConfig = $scopeConfig;
         $this->logger = $logger;
         $this->url = ((bool) $this->getValue('is_sandbox') === true ) ? self::SANDBOX_URL : self::LIVE_URL;
+        $this->enviroment = ((bool) $this->getValue('is_sandbox')) ? 'sandbox_' : 'live_';
     }
     
     public function getConfig() {
         $sessionId = $this->generator->generateDeviceSessionId();
-        $merchantId = $this->getValue('sandbox_merchant_id');
-        $licence = $this->getValue('sandbox_license');
-        $publicKey = $this->getValue('sandbox_pk');
+        $merchantId = $this->getValue($this->enviroment.'merchant_id');
+        $licence = $this->getValue($this->enviroment.'license');
+        $publicKey = $this->getValue($this->enviroment.'pk');
         
         $formatString = sprintf(self::DEVICE_SESSION_URL, $merchantId, $sessionId, $licence, $publicKey);
         $urlDevice = $this->getURL().$formatString;
@@ -48,6 +50,10 @@ class OpenControlConfigProvider implements ConfigProviderInterface
             'is_active' => $isActive
         ];
         return $config;
+    }
+
+    public function getEnviroment(){
+        return $this->enviroment;
     }
 
     public function getURL(){

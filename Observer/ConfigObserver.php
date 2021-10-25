@@ -29,8 +29,8 @@ class ConfigObserver implements ObserverInterface
         $url = $this->config->getURL().'/v1/validation';
         
         $auth = new AuthDto();
-        $auth->user = $this->config->getValue('sandbox_license');
-        $auth->password = $this->config->getValue('sandbox_sk');
+        $auth->user = $this->config->getValue($this->config->getEnviroment().'license');
+        $auth->password = $this->config->getValue($this->config->getEnviroment().'sk');
 
         $response = $this->httpClient->execute($url, $data, $auth, 'POST');
         

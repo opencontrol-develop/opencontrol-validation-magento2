@@ -77,8 +77,8 @@ class ValidateOrder implements ObserverInterface
         }
         
         $auth = new AuthDto();
-        $auth->user = $this->openControlConfig->getValue('sandbox_license');
-        $auth->password = $this->openControlConfig->getValue('sandbox_sk');
+        $auth->user = $this->openControlConfig->getValue($this->openControlConfig->getEnviroment().'license');
+        $auth->password = $this->openControlConfig->getValue($this->openControlConfig->getEnviroment().'sk');
 
         $request = $this->requestService->create($order);
 

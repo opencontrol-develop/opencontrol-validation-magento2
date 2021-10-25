@@ -82,7 +82,7 @@ class RequestValidationService
     }
 
     private function setMerchantInformation($order, RequestValidation $request){
-        $request->merchant->id = $this->config->getValue('sandbox_merchant_id');
+        $request->merchant->id = $this->config->getValue($this->config->getEnviroment().'merchant_id');
     }
 
     private function processAddress($addressToProcess) {
